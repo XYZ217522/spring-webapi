@@ -1,0 +1,52 @@
+version: "3"
+services:
+  springboot-app:
+    image: maven:3-jdk-8-alpine
+    container_name: "springboot-app"
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - TZ=Asia/Taipei
+    command: tail -f /dev/null
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+  postgres:
+    image: postgres:14.9-bullseye
+    container_name: "postgres-for-spring"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres-data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "log_statement=all"]
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    container_name: "prometheus-for-spring"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - backend
+  grafana:
+    image: grafana/grafana:latest
+    container_name: "grafana-for-spring"
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
