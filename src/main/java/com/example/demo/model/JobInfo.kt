@@ -14,7 +14,18 @@ data class JobInfo(
     val flowno: Int,
     val startdt: Timestamp,
     val enddt: Timestamp,
-    val starus: String,
+    val status: String,
     val jobname: String,
     val description: String
 )
+
+fun Map<String, Any>.createByDB(): JobInfo {
+    return JobInfo(
+        flowno = this["flowno"] as Int,
+        startdt = this["startdt"] as Timestamp,
+        enddt = this["enddt"] as Timestamp,
+        status = this["status"] as String,
+        jobname = this["jobname"] as String,
+        description = this["description"] as String
+    )
+}
