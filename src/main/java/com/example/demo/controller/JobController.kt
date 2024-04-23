@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("job")
@@ -39,8 +40,9 @@ class JobController {
 
     @PostMapping("add")
     fun addJob(@RequestBody jobLog: JobLog): ResponseEntity<Flowable<String>> {
-        println("requestBody = $jobLog")
-        return ResponseEntity.ok(jobRxJavaService.addJobLog(jobLog))
+//        println("requestBody = $jobLog")
+        val flowable = jobRxJavaService.addJobLog(jobLog)
+        return ResponseEntity.ok(flowable)
     }
 
     @DeleteMapping("byName/{jobName}")

@@ -5,6 +5,7 @@ import com.example.demo.model.JobInfo
 import com.example.demo.model.createByDB
 import com.example.demo.repository.JobLogRepository
 import com.example.demo.util.DbTool
+import com.example.demo.validator.ObjectValidator
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
@@ -14,7 +15,10 @@ import javax.persistence.EntityNotFoundException
 
 
 @Service
-class JobRxJavaService(private val jobLogRepository: JobLogRepository) {
+class JobRxJavaService(
+    private val jobLogRepository: JobLogRepository,
+    private val jobLogValidator: ObjectValidator<JobLog>
+) {
 
 //    @Autowired
 //    lateinit var jobLogRepositoryImpl: JobLogRepositoryImpl
@@ -47,6 +51,7 @@ class JobRxJavaService(private val jobLogRepository: JobLogRepository) {
 
     //todo valid
     fun addJobLog(jobLog: JobLog): Flowable<String> {
+        jobLogValidator.validate(jobLog)
         return Flowable
             .fromCallable { jobLogRepository.save(jobLog) }
             .flatMap { Flowable.just(mutableMapOf("status" to "success").toJSONStr()) }
