@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query
 
 interface JobLogRepository: JpaRepository<JobLog, Long> {
 
-    @Query(value = "SELECT * FROM erp.job_log WHERE jobname = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM erp.job_log WHERE jobname = :jobName", nativeQuery = true)
     fun findByJobName(jobName: String): JobLog?
 }

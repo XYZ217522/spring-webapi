@@ -12,6 +12,7 @@ import io.reactivex.rxjava3.core.Flowable
 import org.springframework.stereotype.Service
 import toJSONStr
 import javax.persistence.EntityNotFoundException
+import javax.validation.Validation
 
 
 @Service
@@ -51,6 +52,7 @@ class JobRxJavaService(
 
     //todo valid
     fun addJobLog(jobLog: JobLog): Flowable<String> {
+        println("jobLog = $jobLog")
         jobLogValidator.validate(jobLog)
         return Flowable
             .fromCallable { jobLogRepository.save(jobLog) }

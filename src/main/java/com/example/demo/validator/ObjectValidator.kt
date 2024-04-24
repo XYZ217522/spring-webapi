@@ -16,9 +16,9 @@ class ObjectValidator<T> {
         if (violations.isNotEmpty()) {
             violations
                 .stream()
-                .map { it.message }
-                .collect(Collectors.toSet())
-                .run { throw IllegalArgumentException(this.toString()) }
+                .map { "${it.propertyPath ?: "unknown property"} = ${it.message ?: "unknown message"}" }
+                .collect(Collectors.toList())
+                .let { throw IllegalArgumentException(it.toString()) }
         }
     }
 }
