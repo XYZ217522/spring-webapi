@@ -9,10 +9,9 @@ import com.example.demo.validator.ObjectValidator
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import toJSONStr
-import javax.persistence.EntityNotFoundException
-import javax.validation.Validation
 
 
 @Service
@@ -20,9 +19,6 @@ class JobRxJavaService(
     private val jobLogRepository: JobLogRepository,
     private val jobLogValidator: ObjectValidator<JobLog>
 ) {
-
-//    @Autowired
-//    lateinit var jobLogRepositoryImpl: JobLogRepositoryImpl
 
     fun findByNameUseRX(jobName: String): Flowable<JobInfo> {
         return Flowable.create({ emitter ->
@@ -50,7 +46,6 @@ class JobRxJavaService(
         }, BackpressureStrategy.BUFFER)
     }
 
-    //todo valid
     fun addJobLog(jobLog: JobLog): Flowable<String> {
         println("jobLog = $jobLog")
         jobLogValidator.validate(jobLog)

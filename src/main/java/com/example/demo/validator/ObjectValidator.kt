@@ -1,8 +1,8 @@
 package com.example.demo.validator
 
+import jakarta.validation.Validation
 import org.springframework.stereotype.Component
 import java.util.stream.Collectors
-import javax.validation.Validation
 
 @Component
 class ObjectValidator<T> {

@@ -1,5 +1,6 @@
 package com.example.demo.handler
 
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.HandlerExceptionResolver
 import toJSONStr
 import java.util.function.Consumer
-import javax.persistence.EntityNotFoundException
 
 
 @RestControllerAdvice
@@ -21,7 +21,7 @@ class GlobalExceptionHandler(@Qualifier("handlerExceptionResolver") private val 
 
     @ExceptionHandler(ResponseStatusException::class)
     fun handleException(ex: ResponseStatusException): ResponseEntity<String> {
-        return ResponseEntity(ex.message, ex.status)
+        return ResponseEntity(ex.message, ex.statusCode)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

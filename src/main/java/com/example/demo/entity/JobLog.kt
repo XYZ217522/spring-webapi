@@ -1,8 +1,8 @@
 package com.example.demo.entity
 
+import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
 import java.util.*
-import javax.persistence.*
-import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "job_log", schema = "erp")

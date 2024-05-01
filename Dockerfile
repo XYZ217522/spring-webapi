@@ -1,4 +1,4 @@
-FROM maven:3-jdk-8-alpine as builder
+FROM maven:3.8.3-openjdk-17 as builder
 
 WORKDIR /usr/src/app
 

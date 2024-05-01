@@ -1,7 +1,7 @@
 version: "3"
 services:
   springboot-app:
-    image: maven:3-jdk-8-alpine
+    image: maven:3.8.3-openjdk-17
     container_name: "springboot-app"
     volumes:
       - .:/app
@@ -29,24 +29,24 @@ services:
       - "5432:5432"
     networks:
       - backend
-  prometheus:
-    image: prom/prometheus:v2.30.3
-    container_name: "prometheus-for-spring"
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    networks:
-      - backend
-  grafana:
-    image: grafana/grafana:latest
-    container_name: "grafana-for-spring"
-    ports:
-      - "3000:3000"
-    networks:
-      - backend
+#  prometheus:
+#    image: prom/prometheus:v2.30.3
+#    container_name: "prometheus-for-spring"
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#    networks:
+#      - backend
+#  grafana:
+#    image: grafana/grafana:latest
+#    container_name: "grafana-for-spring"
+#    ports:
+#      - "3000:3000"
+#    networks:
+#      - backend
 networks:
   backend:
     driver: bridge

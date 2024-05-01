@@ -1,0 +1,202 @@
+{
+	"info": {
+		"_postman_id": "dec8c755-0cab-4bbc-b758-aff4246ddace",
+		"name": "spring-webapi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18844775"
+	},
+	"item": [
+		{
+			"name": "透過job名稱取得job資訊",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/job/JobA",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"job",
+						"JobA"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(jwt)新增Job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZy5iaWdAbWFpbC5jb20iLCJpYXQiOjE3MTQ1Nzg2MDUsImV4cCI6MTcxNDY2NTAwNX0.nscLnBdJvFz2vF6mf8YaFo1z9mHiJJsrC86NQHUJTsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"startdt\": \"2024-05-01 12:30:00\",\n    \"enddt\": \"2024-05-01 12:40:00\",\n    \"status\": \"start\",\n    \"jobname\": \"job-0501-1\",\n    \"description\": \"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/job/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"job",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "獲得所有job",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/job/getAll",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"job",
+						"getAll"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "透過id刪除Job-jwt",
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/job/byID/13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"job",
+						"byID",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "會員註冊",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"gg\",\n    \"lastname\": \"big\",\n    \"email\": \"gg.big@mail.com\",\n    \"password\": \"gg_big\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "會員驗證",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"gg.big@mail.com\",\n    \"password\": \"gg_big\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/authenticate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "透過name刪除job-jwt",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnZW9yZ2UuaHN1QGV4YW1wbGUuY29tIiwiaWF0IjoxNzE0NTgwMzU3LCJleHAiOjE3MTQ2NjY3NTd9.hGJgmFjhMVtO9dbqjmxAfeddzMb-PGs1whKk2WZr6wI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/job/byName/job-0501-1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"job",
+						"byName",
+						"job-0501-1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
