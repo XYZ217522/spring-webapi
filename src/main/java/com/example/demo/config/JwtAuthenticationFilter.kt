@@ -8,15 +8,19 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 open class JwtAuthenticationFilter(
     private val jwtService: JwtService,
-    private val userDetailService: UserDetailsService
+    private val userDetailService: UserDetailsService,
 ) : OncePerRequestFilter() {
 
+    // AccessDeniedException after migration to Spring Boot 3.0.x
+    // https://github.com/spring-projects/spring-security/issues/12758
+    private val repository = RequestAttributeSecurityContextRepository()
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -30,23 +34,17 @@ open class JwtAuthenticationFilter(
             return
         }
 
-        if (SecurityContextHolder.getContext().authentication == null) {
-            filterChain.doFilter(request, response)
-            return
-        }
-
         val jwt = authHeader.substring(7)
-        val userName = jwtService.extractUsername(jwt) ?: run { filterChain.doFilter(request, response); return }
-        val userDetails = userDetailService.loadUserByUsername(userName)
-
-        if (jwtService.isTokenValid(jwt, userDetails)) {
-            val authToken = UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.authorities
-            )
-            authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-            SecurityContextHolder.getContext().authentication = authToken
+        val userEmail = jwtService.extractUsername(jwt)
+        if (userEmail != null && SecurityContextHolder.getContext().authentication == null) {
+            val userDetails = userDetailService.loadUserByUsername(userEmail)
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities).let {
+                    it.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = it
+                    repository.saveContext(SecurityContextHolder.getContext(), request, response)
+                }
+            }
         }
         filterChain.doFilter(request, response)
     }

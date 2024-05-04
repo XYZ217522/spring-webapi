@@ -2,16 +2,15 @@ package com.example.demo.service
 
 import com.example.demo.entity.JobLog
 import com.example.demo.model.JobInfo
-import com.example.demo.model.createByDB
 import com.example.demo.repository.JobLogRepository
-import com.example.demo.util.DbTool
 import com.example.demo.validator.ObjectValidator
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
-import toJSONStr
+import java.util.*
 
 
 @Service
@@ -21,13 +20,14 @@ class JobRxJavaService(
 ) {
 
     fun findByNameUseRX(jobName: String): Flowable<JobInfo> {
-        return Flowable.create({ emitter ->
-            val sql = "SELECT * FROM erp.job_log WHERE jobname = ?"
-            val params = listOf(jobName)
-            val jobInfo = DbTool.getRowData(sql, params)?.createByDB() ?: throw Exception("query no found!")
-            emitter.onNext(jobInfo)
-            emitter.onComplete()
-        }, BackpressureStrategy.BUFFER)
+//        return Flowable.create({ emitter ->
+//            val sql = "SELECT * FROM erp.job_log WHERE jobname = ?"
+//            val params = listOf(jobName)
+//            val jobInfo = DbTool.getRowData(sql, params)?.createByDB() ?: ("query no found!")
+//            emitter.onNext(jobInfo)
+//            emitter.onComplete()
+//        }, BackpressureStrategy.BUFFER)
+        return Flowable.error(IllegalArgumentException("NOT SUPPORT SERVICE!"))
     }
 
     fun findByName(jobName: String): Flowable<JobLog> {
@@ -46,30 +46,32 @@ class JobRxJavaService(
         }, BackpressureStrategy.BUFFER)
     }
 
-    fun addJobLog(jobLog: JobLog): Flowable<String> {
+    fun addJobLog(jobLog: JobLog): Flowable<Map<String, String>> {
         println("jobLog = $jobLog")
         jobLogValidator.validate(jobLog)
-        return Flowable
-            .fromCallable { jobLogRepository.save(jobLog) }
-            .flatMap { Flowable.just(mutableMapOf("status" to "success").toJSONStr()) }
+        return Flowable.just(jobLog)
+            .map { jobLog.update_time = Date() }
+            .map { jobLogRepository.save(jobLog) }
+            .subscribeOn(Schedulers.io())
+            .flatMap { Flowable.just(mapOf("status" to "success")) }
             .onErrorResumeNext { Flowable.error(IllegalArgumentException()) }
     }
 
-    fun deleteJobLog(jobName: String): Flowable<String> {
+    fun deleteJobLog(jobName: String): Flowable<Map<String, String>> {
         return findByName(jobName)
             .flatMapCompletable { jobLog -> Completable.fromAction { jobLogRepository.delete(jobLog) } }
-            .toSingleDefault(mutableMapOf("status" to "success").toJSONStr())
+            .toSingleDefault(mapOf("status" to "success"))
             .toFlowable()
             .onErrorResumeNext {
                 return@onErrorResumeNext Flowable.error(IllegalArgumentException())
             }
     }
 
-    fun deleteJobLog(flowno: Long): Flowable<String> {
+    fun deleteJobLog(flowno: Long): Flowable<Map<String, String>> {
         return Flowable
             .fromCallable { jobLogRepository.findById(flowno).get() }
             .flatMapCompletable { jobLog -> Completable.fromAction { jobLogRepository.delete(jobLog) } }
-            .toSingleDefault(mutableMapOf("status" to "success").toJSONStr())
+            .toSingleDefault(mapOf("status" to "success"))
             .toFlowable()
             .onErrorResumeNext {
                 if (it is NoSuchElementException) return@onErrorResumeNext Flowable.error(it)

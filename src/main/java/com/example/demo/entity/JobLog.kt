@@ -21,5 +21,8 @@ data class JobLog(
 
     @field:NotBlank val jobname: String? = null,
 
-    val description: String? = null
+    val description: String? = null,
+
+    @Temporal(TemporalType.TIMESTAMP)
+    var update_time: Date? = null
 )

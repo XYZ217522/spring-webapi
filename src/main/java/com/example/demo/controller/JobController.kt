@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.reactivex.rxjava3.core.Flowable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import toOkResponse
 
 @RestController
 @RequestMapping("job")
@@ -38,21 +40,26 @@ class JobController {
     }
 
     @PostMapping("add")
-    fun addJob(@RequestBody jobLog: JobLog): ResponseEntity<Flowable<String>> {
-//        println("requestBody = $jobLog")
-        val flowable = jobRxJavaService.addJobLog(jobLog)
-        return ResponseEntity.ok(flowable)
+    fun addJob(@RequestBody jobLog: JobLog): ResponseEntity<Flowable<Map<String, String>>> {
+        println("requestBody = $jobLog")
+        return jobRxJavaService
+            .addJobLog(jobLog)
+            .toOkResponse()
     }
 
     @DeleteMapping("byName/{jobName}")
-    fun deleteJobName(@PathVariable jobName: String): ResponseEntity<Flowable<String>> {
+    fun deleteJobName(@PathVariable jobName: String): ResponseEntity<Flowable<Map<String, String>>> {
         println("jobName = $jobName")
-        return ResponseEntity.ok(jobRxJavaService.deleteJobLog(jobName))
+        return jobRxJavaService
+            .deleteJobLog(jobName)
+            .toOkResponse()
     }
 
     @DeleteMapping("byID/{flowno}")
-    fun deleteJobById(@PathVariable flowno: Long): ResponseEntity<Flowable<String>> {
+    fun deleteJobById(@PathVariable flowno: Long): ResponseEntity<Flowable<Map<String, String>>> {
         println("flowno = $flowno")
-        return ResponseEntity.ok(jobRxJavaService.deleteJobLog(flowno))
+        return jobRxJavaService
+            .deleteJobLog(flowno)
+            .toOkResponse()
     }
 }

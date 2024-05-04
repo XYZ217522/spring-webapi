@@ -5,6 +5,7 @@ import com.example.demo.auth.AuthenticationResponse
 import com.example.demo.auth.RegisterRequest
 import com.example.demo.service.AuthenticationService
 import io.reactivex.rxjava3.core.Single
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
